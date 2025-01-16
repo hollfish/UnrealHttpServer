@@ -1,6 +1,6 @@
 #include "Util/WebUtil.h"
 #include "Log.h"
-#include "Engine.h"
+// #include "Engine.h"
 #include "Serialization/JsonTypes.h"
 #include "Dom/JsonValue.h"
 #include "Serialization/JsonWriter.h"
@@ -55,16 +55,18 @@ namespace HttpServerPlus
 
 	FHttpRequestHandler FWebUtil::CreateHandler(const FHttpResponser& HttpResponser)
 	{
-		return [HttpResponser](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
-		{
-			auto Response = HttpResponser(Request);
-			if (Response == nullptr)
+		return FHttpRequestHandler::CreateLambda(
+			[HttpResponser](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
 			{
-				return false;
+				auto Response = HttpResponser(Request);
+				if (Response == nullptr)
+				{
+					return false;
+				}
+				OnComplete(MoveTemp(Response));
+				return true;
 			}
-			OnComplete(MoveTemp(Response));
-			return true;
-		};
+		);
 	}
 
 	TSharedPtr<FJsonObject> FWebUtil::GetRequestJsonBody(const FHttpServerRequest& Request)

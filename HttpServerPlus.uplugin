@@ -20,6 +20,7 @@
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"WhitelistPlatforms": [
+				"Linux",
 				"Android",
 				"Win64"
 			]
